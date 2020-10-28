@@ -125,3 +125,7 @@ def mainFunc():
     print ("--()--")
 
 mainFunc()
+
+
+
+#Todo : Si le fichier est trouve mais qu'il a un titre original il faudrait prendre ce titre
