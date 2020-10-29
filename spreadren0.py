@@ -1,6 +1,7 @@
 import os
 import os.path
 import imdb
+import shutil
 
 listFilesBefore = []
 listFilesAfter = []
@@ -22,7 +23,7 @@ def datzETr(fileNametoTr,indexGil):
     # print("~~~~~~~~~~~~~~~ EO STEP 1 ~~~~~~~~~~~~~~~~~~~~~~~~")
 
     # Etape 2 : on remplace tous les . par des espaces
-    fileNametoTr = fileNametoTr.replace('.',' ')
+    fileNametoTr = fileNametoTr.replace('.', ' ')
     listFilesAfter[indexGil] = fileNametoTr
     #print(listFilesAfter)
     # print("~~~~~~~~~~~~~~~ EO STEP 2 ~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -40,55 +41,55 @@ def datzETr(fileNametoTr,indexGil):
 
 def get_dirToMove(genre):
     if(genre == "Action"):
-        pathToMove="Sunday"
+        pathToMove="01.ACTION"
     elif(genre == "Adventure"):
-        pathToMove="Monday"
+        pathToMove="02.AVENTURE"
     elif(genre == "Animation"):
-        pathToMove="Tuesday"
+        pathToMove="03.ANIMATION"
     elif(genre == "Biography"):
-        pathToMove="Wednesday"
+        pathToMove="04.BIOGRAPHIE"
     elif(genre == "Comedy"):
-        pathToMove="Thursday"
+        pathToMove="05.COMEDIE"
     elif(genre == "Crime"):
-        pathToMove="Friday"
+        pathToMove="06.CRIME"
     elif(genre == "Documentary"):
-        pathToMove="Saturday"
+        pathToMove="07.DOCUMENTAIRE"
     elif(genre == "Drama"):
-        pathToMove="Monday"
+        pathToMove="08.DRAME"
     elif(genre == "Family"):
-        pathToMove="Tuesday"
+        pathToMove="09.FAMILLE"
     elif(genre == "Fantasy"):
-        pathToMove="Wednesday"
+        pathToMove="10.FANTASY"
     elif(genre == "Film Noir"):
-        pathToMove="Thursday"
+        pathToMove="11.FILM_NOIR"
     elif(genre == "History"):
-        pathToMove="Friday"
+        pathToMove="12.HISTORIQUE"
     elif(genre == "Horror"):
-        pathToMove="Saturday"
+        pathToMove="13.HORREUR"
     elif(genre == "Music"):
-        pathToMove="Monday"
+        pathToMove="14.MUSICAL"
     elif(genre == "Musical"):
-        pathToMove="Tuesday"
+        pathToMove="14.MUSICAL"
     elif(genre == "Mystery"):
-        pathToMove="Wednesday"
+        pathToMove="15.MYSTERE"
     elif(genre == "Romance"):
-        pathToMove="Thursday"
+        pathToMove="16.ROMANCE"
     elif(genre == "Sci-Fi"):
-        pathToMove="Friday"
+        pathToMove="17.SCI-FI"
     elif(genre == "Short Film"):
-        pathToMove="Saturday"
+        pathToMove="18.SHORT_CM"
     elif(genre == "Sport"):
-        pathToMove="Monday"
+        pathToMove="19.SPORT"
     elif(genre == "Superhero"):
-        pathToMove="Tuesday"
+        pathToMove="20.SUPER_HEROS"
     elif(genre == "Thriller"):
-        pathToMove="Wednesday"
+        pathToMove="21.THRILLER"
     elif(genre == "War"):
-        pathToMove="Thursday"
+        pathToMove="22.GUERRE"
     elif(genre == "Western"):
-        pathToMove="Friday"
+        pathToMove="23.WESTERN"
     else:
-        pathToMove="."
+        pathToMove="29.ERREUR_DE_CLASSEMENT"
     return pathToMove
 
 
@@ -107,17 +108,22 @@ def mainFunc():
             listFilesBefore.append(file)
             listFilesAfter.append(file)
             datzETr(listFilesAfter[indexFile], indexFile)
-            test = get_dirToMove(listFilesAfter[indexFile])
-            print("test vaut : " + test );
+
+            test1 = (os.path.abspath(variaREP) + '/' + listFilesBefore[indexFile]).strip()
+            test2 = os.path.exists((os.path.abspath(variaREP) + '/' + listFilesBefore[indexFile]).strip())
+            print ("test 1 : " + test1)
+            print(bool(test2))
+
 
             # Une fois le type de Film recupere on deplace le fichier correspondant dans le bon dossier
-            if os.path.exists((os.path.abspath(variaREP) + '/' + listFilesBefore[indexFile]).strip()) == 0:
-                print("on passe ici ")
+            if os.path.exists((os.path.abspath(variaREP) + '/' + listFilesBefore[indexFile]).strip()):
+                print ("on passe lalalala ")
                 if listFilesAfter[indexFile] != listFilesBefore[indexFile]:
-
-
-
-                    #os.rename(os.path.abspath(variaREP) + '/' + file, os.path.abspath(variaREP) + '/' + listFilesAfter[indexFile])
+                    oldPlace = (os.path.abspath(variaREP) + '/' + listFilesBefore[indexFile]).strip()
+                    newPlace = (os.path.split(os.path.abspath(variaREP))[0] + '/'
+                    + get_dirToMove(listFilesAfter[indexFile]) + '/' + listFilesBefore[indexFile]).strip()
+                    print("oldPlace : " + oldPlace + " newPlace : " + newPlace)
+                    shutil.move(oldPlace, newPlace)
                     indexFileMove = indexFileMove + 1
             indexFile = indexFile + 1
 
@@ -129,3 +135,7 @@ mainFunc()
 
 
 #Todo : Si le fichier est trouve mais qu'il a un titre original il faudrait prendre ce titre
+#Todo : si Animation fait partie des types alors il est animation
+#Todo : deplacement des fichiers
+#Todo :
+
