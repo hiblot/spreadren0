@@ -15,9 +15,11 @@ def listTargetRep():
     return variaREP
 
 def datzETr(fileNametoTr,indexGil):
+
     # Etape 1 : on remplace toutes les fins de ligne
     root_ext = os.path.splitext(fileNametoTr)
     fileNametoTr = root_ext[0]
+    extensionNewFileName = root_ext[1]
     listFilesAfter[indexGil] = fileNametoTr
     #print(listFilesAfter)
     # print("~~~~~~~~~~~~~~~ EO STEP 1 ~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -29,13 +31,36 @@ def datzETr(fileNametoTr,indexGil):
     # print("~~~~~~~~~~~~~~~ EO STEP 2 ~~~~~~~~~~~~~~~~~~~~~~~~")
 
     #Etape 3 : Pour chaque titre de film on realise une recheche sur IMDB
-    #TODO tester le cas ou IMDB ne trouve pas
     movieFind = ia.search_movie(fileNametoTr)
     if movieFind != 0:
         movieGet = ia.get_movie(movieFind[0].movieID)
         print(movieGet)
-        print(movieGet['genres'][0])
-        listFilesAfter[indexGil] = movieGet['genres'][0]
+
+        #print(movieFind[0].movieID)
+        genreTMP = movieGet['genres'][0]
+        for genre in movieGet['genres']:
+            #print("#### genre : " + genre)
+            if genre == "Animation":
+                genreTMP = genre
+                break
+            elif genre == "Fantasy":
+                genreTMP = genre
+            elif genre == "Sci-Fi":
+                genreTMP = genre
+            elif genre == "Mystery":
+                genreTMP = genre
+
+        listFilesAfter[indexGil] = genreTMP
+
+        # On prend le nom du fichier de sortie
+        newFileName = movieGet['title']
+        newFileName = newFileName.replace(' ', '.')
+        newFileName = newFileName.replace('-', '.')
+        newFileName = newFileName.replace('_', '.')
+        newFileName = newFileName + extensionNewFileName
+        #print("newFileName : " + newFileName)
+    return newFileName
+
     # print("~~~~~~~~~~~~~~~ EO STEP 3 ~~~~~~~~~~~~~~~~~~~~~~~~")
 
 
@@ -107,22 +132,18 @@ def mainFunc():
             print(file)
             listFilesBefore.append(file)
             listFilesAfter.append(file)
-            datzETr(listFilesAfter[indexFile], indexFile)
-
-            test1 = (os.path.abspath(variaREP) + '/' + listFilesBefore[indexFile]).strip()
-            test2 = os.path.exists((os.path.abspath(variaREP) + '/' + listFilesBefore[indexFile]).strip())
-            print ("test 1 : " + test1)
-            print(bool(test2))
-
+            newFileName = datzETr(listFilesAfter[indexFile], indexFile)
 
             # Une fois le type de Film recupere on deplace le fichier correspondant dans le bon dossier
             if os.path.exists((os.path.abspath(variaREP) + '/' + listFilesBefore[indexFile]).strip()):
-                print ("on passe lalalala ")
                 if listFilesAfter[indexFile] != listFilesBefore[indexFile]:
+                    #print("## newFileName : " + newFileName)
                     oldPlace = (os.path.abspath(variaREP) + '/' + listFilesBefore[indexFile]).strip()
                     newPlace = (os.path.split(os.path.abspath(variaREP))[0] + '/'
-                    + get_dirToMove(listFilesAfter[indexFile]) + '/' + listFilesBefore[indexFile]).strip()
-                    print("oldPlace : " + oldPlace + " newPlace : " + newPlace)
+                    #+ get_dirToMove(listFilesAfter[indexFile]) + '/' + listFilesBefore[indexFile]).strip()
+                    + get_dirToMove(listFilesAfter[indexFile]) + '/' + newFileName).strip()
+                    print("~~~~~ oldPlace : " + oldPlace)
+                    print("~~~~~ newPlace : " + newPlace)
                     shutil.move(oldPlace, newPlace)
                     indexFileMove = indexFileMove + 1
             indexFile = indexFile + 1
@@ -132,10 +153,6 @@ def mainFunc():
 
 mainFunc()
 
-
-
 #Todo : Si le fichier est trouve mais qu'il a un titre original il faudrait prendre ce titre
-#Todo : si Animation fait partie des types alors il est animation
-#Todo : deplacement des fichiers
-#Todo :
+
 
